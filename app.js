@@ -5,6 +5,7 @@ if(process.env.NODE_ENV !="production"){
 const express=require("express");
 const app=express();
 const mongoose=require("mongoose");
+const Listing=require("./models/listing");
 
 const path=require("path");
 
@@ -89,7 +90,15 @@ app.use((req,res,next)=>{
     next();
 });
 
-
+app.get("/",async(req,res)=>{
+    try{
+        const listings=await Listing.find({});
+        res.render("listings/index",{listings});
+    } catch(err){
+        console.error("error fetching listings:",err);
+        res.status(500).send("server error while fetching listings. ");
+    }
+});
 
 app.use("/listings",listingRouter);
 app.use("/listings/:id/reviews",reviewRouter);
